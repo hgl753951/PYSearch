@@ -45,6 +45,15 @@ typedef NS_ENUM(NSInteger, PYSearchResultShowMode) {
     PYSearchResultShowModeEmbed,    // embed, dispaly the view of search result by embed
     PYSearchResultShowModeDefault = PYSearchResultShowModeCustom // defualt is `PYSearchResultShowModeCustom`
 };
+/**
+ mode of search view controller display
+ */
+typedef NS_ENUM(NSInteger, PYSearchViewControllerShowMode) {
+    PYSearchViewControllerShowModeModal,    // modal, dispaly the view of searchViewController by modal
+    PYSearchViewControllerShowModePush,   // push, dispaly the view of searchViewController by push
+    PYSearchViewControllerShowDefault = PYSearchViewControllerShowModeModal // defualt is `PYSearchViewControllerShowModeModal`
+};
+
 
 /**
  The protocol of data source, you can custom the suggestion view by implement these methods the data scource.
@@ -179,6 +188,13 @@ didSelectSearchSuggestionAtIndex:(NSInteger)index
  */
 - (void)didClickCancel:(PYSearchViewController *)searchViewController;
 
+/**
+ Called when back item did press, default execute `[self.navigationController popViewControllerAnimated:YES]`.
+ 
+ @param searchViewController search view controller
+ */
+- (void)didClickBack:(PYSearchViewController *)searchViewController;
+
 @end
 
 @interface PYSearchViewController : UIViewController
@@ -298,9 +314,19 @@ didSelectSearchSuggestionAtIndex:(NSInteger)index
 @property (nonatomic, assign) PYSearchResultShowMode searchResultShowMode;
 
 /**
+ The mode of display search view controller, default is `PYSearchViewControllerShowModeModal`.
+ */
+@property (nonatomic, assign) PYSearchViewControllerShowMode searchViewControllerShowMode;
+
+/**
  The search bar
  */
 @property (nonatomic, weak) UISearchBar *searchBar;
+
+/**
+ The text field of search bar
+ */
+@property (nonatomic, weak) UITextField *searchTextField;
 
 /**
  The background color of search bar.
@@ -308,9 +334,29 @@ didSelectSearchSuggestionAtIndex:(NSInteger)index
 @property (nonatomic, strong) UIColor *searchBarBackgroundColor;
 
 /**
+ The cornerRadius of `_UISearchBarSearchFieldBackgroundView` which from `self.searchTextField.subviews`, default is 0.0.
+ */
+@property (nonatomic, assign) CGFloat searchBarCornerRadius;
+
+/**
  The barButtonItem of cancel
  */
-@property (nonatomic, weak) UIBarButtonItem *cancelButton;
+@property (nonatomic, strong) UIBarButtonItem *cancelBarButtonItem;
+
+/**
+ The customView of cancelBarButtonItem
+ */
+@property (nonatomic, weak) UIButton *cancelButton;
+
+/**
+ The barButtonItem of back
+ */
+@property (nonatomic, strong) UIBarButtonItem *backBarButtonItem;
+
+/**
+ The customView of backBarButtonItem
+ */
+@property (nonatomic, weak) UIButton *backButton;
 
 /**
  The search suggestion view
@@ -352,6 +398,11 @@ didSelectSearchSuggestionAtIndex:(NSInteger)index
  Note: it is effective only when `searchResultShowMode` is `PYSearchResultShowModeEmbed`.
  */
 @property (nonatomic, assign) BOOL showSearchResultWhenSearchBarRefocused;
+
+/**
+ Whether show keyboard when return to search result, default is YES.
+ */
+@property (nonatomic, assign) BOOL showKeyboardWhenReturnSearchResult;
 
 /**
  Creates an instance of searchViewContoller with popular searches and search bar's placeholder.
